@@ -5,6 +5,8 @@ import React from 'react';
 
 const TaskModifier = props => {
 
+    
+    console.log(props)
 return (
     <section>
         <div>
@@ -21,10 +23,10 @@ return (
         <div className="allTasks">
             {props.data.tasks.map((task) => {
                 <div className="task">
-                    <p>User: {task.workerId}</p>
+                    <p>User: {task.worker_id}</p>
                     <p>Description: {task.description}</p>
-                    <p>Status: {task.status}</p>
-                    <button className="deleteTaskButton" onClick={() => props.deleteTask(task.id)}>Delete this Task</button>
+                    <p>Status: {task.completed}</p>
+                    <button className="deleteTaskButton" onClick={() => props.deleteTask(task._id)}>Delete this Task</button>
                 </div>
             })}
         </div>
