@@ -9,7 +9,7 @@ router.get('/', apiController.getTasks, (req, res, next) => {
 });
 
 router.post('/', apiController.addTask, (req, res, next) => {
-  return res.status(200)
+  return res.status(200).json('Successfully added task!');
 });
 
 router.delete('/', apiController.deleteTask, (req, res, next) => {

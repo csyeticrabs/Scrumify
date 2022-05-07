@@ -67,8 +67,10 @@ class App extends Component {
   }
 
   handleSetTask(e) {
-      this.state.currentTaskDescription = (e.target.value);
-      return state;
+    return this.setState({
+      ...this.state,
+      currentTaskDescription: (e.target.value)
+    })
   }
 
   // Method to edit a task inside our app.
@@ -98,16 +100,18 @@ class App extends Component {
   // }
 
   // Method to add a task to our board. 
-  addTask(e) {
+  addTask(event) {
+    event.preventDefault();
+
     const newTask = {
-      _id: uuidv4(), //autocreated by database?
+      _id: 1232, //autocreated by database?
       description: this.state.currentTaskDescription,
-      worker_id: 69, //hardcoded default #
       completed: false, //hardcoded default status
-    }
+      worker_id: 2 //hardcoded default # "nice" - Tony
+    };
     // sending the new task to the db
     // expecting to receive nothing back?
-    fetch('/api/', {
+    fetch('/api', {
       method: 'POST',
       headers: {
         'Content-Type': 'Application/JSON'
@@ -131,12 +135,12 @@ class App extends Component {
   // Method to delete a task. 
   //we pass in the task's primary (unique key)
   deleteTask(id) {
-    fetch(`/api/`, {
+    fetch('/api', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'Application/JSON'
       },
-      body: JSON.stringify(id),
+      body: JSON.stringify({_id: id}),
     })
     .then(data => data.json())
     .then(() => {

@@ -7,27 +7,4 @@ const Navbar = props => {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 export default navBar;
