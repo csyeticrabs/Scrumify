@@ -52,13 +52,12 @@ class App extends Component {
       method: 'GET'
     })
     .then(data => data.json())
-    .then(data => console.log(data))
     .then(allTasks => {
       this.setState(
         {
           ...this.state,
           tasks: allTasks,
-          // users: users
+
         })
         return;
     })
@@ -108,7 +107,7 @@ class App extends Component {
     }
     // sending the new task to the db
     // expecting to receive nothing back?
-    fetch('/api/tasks', {
+    fetch('/api/', {
       method: 'POST',
       headers: {
         'Content-Type': 'Application/JSON'
@@ -132,9 +131,12 @@ class App extends Component {
   // Method to delete a task. 
   //we pass in the task's primary (unique key)
   deleteTask(id) {
-
-    fetch(`/api/tasks/${id}`, {
+    fetch(`/api/`, {
       method: 'DELETE',
+      headers: {
+        'Content-Type': 'Application/JSON'
+      },
+      body: JSON.stringify(id),
     })
     .then(data => data.json())
     .then(() => {
@@ -156,7 +158,7 @@ class App extends Component {
   render () {
     
     return (
-      (this.state.tasks && <div>
+      (this.state.tasks.length > 0 && <div>
       <MainContainer
         getAllInfo = {this.getAllInfo}
         // editTask = {this.editTask}
