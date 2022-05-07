@@ -5,6 +5,7 @@ const App = () => {
     <div>
       <button className='btn btn-primary'>Test</button>
     <h1>Hello World</h1>
+    <MainContainer />
     </div>
   )
 }
