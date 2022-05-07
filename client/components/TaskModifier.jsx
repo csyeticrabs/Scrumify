@@ -10,7 +10,7 @@ const TaskModifier = props => {
 return (
     <section>
         <div>
-            <form className="taskForm" onSubmit={() => {addTask}}>
+            <form className="taskForm" onSubmit={(e) => props.addTask(e)}>
                 <input 
                     name="description"
                     // value={description}
