@@ -18,12 +18,14 @@ class MainContainer extends Component {
     }
     //get all pictures
     componentDidMount() {
-        fetch//(Api?)
+        // fetch//(Api?)
     }
 
     render() {
     // Make sure you to do conditional rendering to make sure 
-        return
+        return (
+            <h1>Hi, this is the main container</h1>
+        )
     }
 }
 

@@ -1,18 +1,19 @@
 import React, {Component, useState, useEffect} from 'react';
 import MainContainer from "./components/MainContainer.jsx";
 import TaskModifier from "./components/TaskModifier.jsx"
+import { v4 as uuidv4 } from 'uuid';
 
 // Class/Constructor version
 
-const tasks = [{
-  id: Math.random(), //autocreated by database?
-  description: "fork ma lyfe",
-  workerId: Math.random(), //foreign key
-  status: false, //a boolean
-}];
+// const tasks = [{
+//   _id: Math.random(), //autocreated by database?
+//   description: "fork ma lyfe",
+//   completed: false, //a boolean
+//   worker_id: Math.random(), //foreign key
+// }];
 
 const users = [{
-  id: Math.random(), //primary key
+  _id: Math.random(), //primary key
   name: 'harveysmith',
 }]
 
@@ -21,16 +22,16 @@ class App extends Component {
     super(props);
     //should get data from all current users and tasks (as arrays of objects)
     this.state = {
-        users: users,
-        tasks: tasks,
+        users: [],
+        tasks: [],
         // currentTaskId: 0,
         currentTaskDescription: 'get this fucking app working',
         // currentTaskWorkerId: 0,
-        currentTaskStatus: false
+        // currentTaskStatus: false //put/patch update request status from 
     };
   this.getAllInfo = this.getAllInfo.bind(this);
   this.handleSetTask = this.handleSetTask.bind(this);
-  this.editTask = this.editTask.bind(this); 
+  // this.editTask = this.editTask.bind(this); 
   this.addTask = this.addTask.bind(this); 
   this.deleteTask = this.deleteTask.bind(this); 
   }
@@ -38,7 +39,7 @@ class App extends Component {
   //wrap this in useEffect?
   //get all users/tasks info on initial render from db to update state
   componentDidMount(){
-    // this.getAllInfo();
+    this.getAllInfo();
   }
   //get all users/task info every time a component updates? idk if this makes sense
   componentDidUpdate(){
@@ -51,13 +52,15 @@ class App extends Component {
       method: 'GET'
     })
     .then(data => data.json())
-    .then(data => {
-      this.setState(prevState => {
-        return {
-          users: data.users,
-          tasks: data.tasks,
-        }
-      })
+    .then(data => console.log(data))
+    .then(allTasks => {
+      this.setState(
+        {
+          ...this.state,
+          tasks: allTasks,
+          // users: users
+        })
+        return;
     })
     .catch(err => {
       console.log(`Error fetching all task and user data! Error: ${err}`);
@@ -66,40 +69,42 @@ class App extends Component {
 
   handleSetTask(e) {
       this.state.currentTaskDescription = (e.target.value);
+      return state;
   }
 
   // Method to edit a task inside our app.
-  editTask(id, updatedTask) { //pass in the updatedTask as an arg or create new input field like in newTask below
-    const updatedTaskList = [...this.state.tasks];
-    const index = taskList.findIndex(task => task.id === id)
-    updatedTaskList[index] = updatedTask;
-    fetch(`/api/tasks/${id}`, {
-      method: 'PUT', 
-      headers: {
-        'Content-Type': 'Application/JSON'
-      },
-      body: JSON.stringify(updatedTaskList)
-    })
-    .then(data => data.json())
-    .then(() => {
-      this.setState(prevState => {
-        return {
-          ...this.state,
-          tasks: updatedTaskList,
-        }
-      })
-    })
-    .catch(err => {
-      console.log(`Error editing a task!: ${err}`)
-    });
-  }
+  // editTask(id, updatedTask) { //pass in the updatedTask as an arg or create new input field like in newTask below
+  //   const updatedTaskList = [...this.state.tasks];
+  //   const index = taskList.findIndex(task => task._id === id)
+  //   updatedTaskList[index] = updatedTask;
+  //   fetch(`/api/tasks/${id}`, {
+  //     method: 'PUT', 
+  //     headers: {
+  //       'Content-Type': 'Application/JSON'
+  //     },
+  //     body: JSON.stringify(updatedTaskList)
+  //   })
+  //   .then(data => data.json())
+  //   .then(() => {
+  //     this.setState(prevState => {
+  //       return {
+  //         ...this.state,
+  //         tasks: updatedTaskList,
+  //       }
+  //     })
+  //   })
+  //   .catch(err => {
+  //     console.log(`Error editing a task!: ${err}`)
+  //   });
+  // }
+
   // Method to add a task to our board. 
   addTask(e) {
     const newTask = {
-      id: 0, //autocreated by database?
+      _id: uuidv4(), //autocreated by database?
       description: this.state.currentTaskDescription,
-      workerId: 69, //hardcoded
-      status: false, //hardcoded
+      worker_id: 69, //hardcoded default #
+      completed: false, //hardcoded default status
     }
     // sending the new task to the db
     // expecting to receive nothing back?
@@ -136,7 +141,7 @@ class App extends Component {
       this.setState(prevState => {
         return {
           ...this.state,
-          tasks: prevState.tasks.filter(task => task.id !== id)
+          tasks: prevState.tasks.filter(task => task._id !== id)
         }
       })
     })
@@ -149,25 +154,27 @@ class App extends Component {
   // this.state.currentTaskStatus = true;
 
   render () {
+    
     return (
-      <div>
+      (this.state.tasks && <div>
       <MainContainer
         getAllInfo = {this.getAllInfo}
-        editTask = {this.editTask}
+        // editTask = {this.editTask}
         addTask = {this.addTask}
         handleSetTask = {this.handleSetTask}
         deleteTask = {this.deleteTask}
         data = {this.state}
       />
+      
       <TaskModifier
          getAllInfo = {this.getAllInfo}
-         editTask = {this.editTask}
+        //  editTask = {this.editTask}
          addTask = {this.addTask}
          handleSetTask = {this.handleSetTask}
          deleteTask = {this.deleteTask}
          data = {this.state}
       />
-      </div>
+      </div>)
     )
   }
 }
