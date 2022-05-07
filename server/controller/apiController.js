@@ -18,6 +18,7 @@ apiController.getTasks = async (req, res, next) => {
 
 apiController.addTask = async (req, res, next) => {
   try {
+    console.log(req.body);
     let { _id, description, completed, worker_id } = req.body;
 
     if (completed === undefined) completed = false;
