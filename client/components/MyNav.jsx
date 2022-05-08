@@ -7,7 +7,7 @@ const MyNav = (props) => {
       <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
           <Link to="/" class="navbar-brand">
-            Navbar
+            Home
           </Link>
           <Link to="/mytask" className="btn btn-primary">
             My Tasks

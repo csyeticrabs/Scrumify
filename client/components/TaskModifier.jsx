@@ -1,20 +1,17 @@
 import { Component } from 'react';
 import React from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Dropdown } from 'react-bootstrap';
 
 // New Page for Add and Delete Task
 
 const TaskModifier = (props) => {
+  console.log('All current users', props.data.users)
+  
   return (
     <section className="mt-5">
-      <div class="input-group input-group-lg">
-        <div class="input-group-prepend">
-          {/* <span class="input-group-text" id="inputGroup-sizing-lg">
-            Create New Task
-          </span> */}
-        </div>
-        <Form>
-          <Form.Group className="mb-3">
+      {/* <div class="input-group input-group-lg"> */}
+        {/* <div class="input-group-prepend"> */}
+        {/* </div>
             <input
               name="description"
               type="text"
@@ -24,7 +21,6 @@ const TaskModifier = (props) => {
               onChange={props.handleSetTask}
               placeholder="Create a New Task"
             />
-          </Form.Group>
           <Button
             variant="primary"
             type="submit"
@@ -32,8 +28,44 @@ const TaskModifier = (props) => {
           >
             Add Me!
           </Button>
-        </Form>
+      </div> */}
+      {/* Dropdown Section  */}
+      <div class="input-group input-group-lg">
+        <input 
+          type="text" 
+          class="form-control" 
+          aria-label="Text input with dropdown button" 
+          name="description"
+          aria-describedby="inputGroup-sizing-lg"
+          onChange={props.handleSetTask}
+          placeholder="Create a New Task"
+        />
+        
+        <Dropdown onSelect={props.handleSelect}>
+          <Dropdown.Toggle variant="warning" id="dropdown-basic">
+            {props.data.currentUser.name}
+          </Dropdown.Toggle>
+
+          <Dropdown.Menu >
+            {props.data.users.map((user, index) => { 
+               return <Dropdown.Item href={`#action/action-${index}`} eventKey={JSON.stringify(user)}>{user.name}</Dropdown.Item>
+            })}
+            {/* <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item> */}
+          </Dropdown.Menu>
+        </Dropdown> 
+        <Button
+            variant="primary"
+            type="submit"
+            onClick={(e) => props.addTask(e)}
+          >
+            Add Me!
+          </Button>
       </div>
+
+
+
 
       {/* <div>
         <form className="taskForm" onSubmit={(e) => props.addTask(e)}>
@@ -55,8 +87,8 @@ const TaskModifier = (props) => {
             </tr>
           </thead>
           <tbody>
-            {props.data.tasks.map((task) => {
-              return (
+            {props.data.tasks.map((task) => 
+              (
                 <tr className="task">
                   <td>Description: {task.description}</td>
                   <td>
@@ -80,8 +112,8 @@ const TaskModifier = (props) => {
                     </button>
                   </td>
                 </tr>
-              );
-            })}
+              )
+            )}
           </tbody>
         </table>
       </div>
