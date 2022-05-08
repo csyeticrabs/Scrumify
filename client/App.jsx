@@ -1,8 +1,9 @@
-import React, { Component, useState, useEffect } from 'react';
+import React, { Component, useState, useEffect, Fragment } from 'react';
 import MainContainer from './components/MainContainer.jsx';
 import TaskModifier from './components/TaskModifier.jsx';
-import { nanoid } from 'nanoid';
+import MyNav from './components/MyNav.jsx';
 
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 // Class/Constructor version
 
 // const tasks = [{
@@ -11,13 +12,6 @@ import { nanoid } from 'nanoid';
 //   completed: false, //a boolean
 //   worker_id: Math.random(), //foreign key
 // }];
-
-const users = [
-  {
-    _id: Math.random(), //primary key
-    name: 'harveysmith',
-  },
-];
 
 class App extends Component {
   constructor(props) {
@@ -36,6 +30,7 @@ class App extends Component {
     // this.editTask = this.editTask.bind(this);
     this.addTask = this.addTask.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
+    this.updateTask = this.updateTask.bind(this);
   }
 
   //wrap this in useEffect?
@@ -99,6 +94,43 @@ class App extends Component {
   //   });
   // }
 
+  updateTask(id) {
+    fetch('/api', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'Application/JSON',
+      },
+      body: JSON.stringify({ _id: id }),
+    })
+      .then((data) => data.json())
+      .then(() => {
+        // this.setState((prevState) => {
+        //   return {
+        //     ...prevState,
+        //     // tasks: (prevState.tasks.filter(
+        //     //   (task) => task._id === id
+        //     // ).completed = true),
+        //   };
+        // });
+        this.setState((prevState) => {
+          return {
+            ...prevState,
+            // tasks: prevState.tasks.map(task => {
+            //   return task._id === id ? {...task, task.completed: true} : {...task}
+            // })
+            tasks: prevState.tasks.reduce((acc, curr) => {
+              if (curr._id === id) curr.completed = true;
+              acc.push(curr);
+              return acc;
+            }, []),
+          };
+        });
+      })
+      .catch((err) => {
+        console.log(`Error fetching putting task! Error: ${err}`);
+      });
+  }
+
   // Method to add a task to our board.
   addTask(event) {
     event.preventDefault();
@@ -119,10 +151,15 @@ class App extends Component {
       body: JSON.stringify(newTask),
     })
       .then(() => {
+        // if you use a callback inside setState the parameter or whatever you name it will always be the previousState.
         this.setState((prevState) => {
           return {
             ...prevState,
-            tasks: prevState.tasks.push(newTask),
+            // ... Operator explanation:
+            // users: [],
+            // tasks: [],
+            // currentTaskDescription: 'get this fucking app working',
+            tasks: [newTask, ...prevState.tasks],
           };
         });
       })
@@ -136,9 +173,7 @@ class App extends Component {
       .catch((err) => {
         console.log(`Error adding a new task!: ${err}`);
       });
-    window.location = '/';
-    // this.forceUpdate();
-    // event.target.reset();
+    // window.location = '/mytask';
   }
   // Method to delete a task.
   //we pass in the task's primary (unique key)
@@ -168,27 +203,45 @@ class App extends Component {
 
   render() {
     return (
-      this.state.tasks.length > 0 && (
-        <div>
-          <MainContainer
-            getAllInfo={this.getAllInfo}
-            // editTask = {this.editTask}
-            addTask={this.addTask}
-            handleSetTask={this.handleSetTask}
-            deleteTask={this.deleteTask}
-            data={this.state}
-          />
+      <BrowserRouter>
+        <Fragment>
+          <MyNav />
+          <div className="container">
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <MainContainer
+                    getAllInfo={this.getAllInfo}
+                    // editTask = {this.editTask}
+                    addTask={this.addTask}
+                    handleSetTask={this.handleSetTask}
+                    deleteTask={this.deleteTask}
+                    data={this.state}
+                  />
+                }
+              ></Route>
 
-          <TaskModifier
-            getAllInfo={this.getAllInfo}
-            //  editTask = {this.editTask}
-            addTask={this.addTask}
-            handleSetTask={this.handleSetTask}
-            deleteTask={this.deleteTask}
-            data={this.state}
-          />
-        </div>
-      )
+              {this.state.tasks.length > 0 && (
+                <Route
+                  path="/mytask"
+                  element={
+                    <TaskModifier
+                      getAllInfo={this.getAllInfo}
+                      //  editTask = {this.editTask}
+                      addTask={this.addTask}
+                      handleSetTask={this.handleSetTask}
+                      deleteTask={this.deleteTask}
+                      data={this.state}
+                      updateTask={this.updateTask}
+                    />
+                  }
+                ></Route>
+              )}
+            </Routes>
+          </div>
+        </Fragment>
+      </BrowserRouter>
     );
   }
 }

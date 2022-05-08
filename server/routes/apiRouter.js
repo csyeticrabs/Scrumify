@@ -17,7 +17,7 @@ router.delete('/', apiController.deleteTask, (req, res, next) => {
 });
 
 router.put('/', apiController.updateTask, (req, res, next) => {
-  return res.status(200).json(res.locals.updateTask);
+  return res.status(200).json('Task Status Updated');
 });
 
 module.exports = router;

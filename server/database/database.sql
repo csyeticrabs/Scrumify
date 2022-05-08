@@ -9,7 +9,7 @@ CREATE TABLE people (
 CREATE TABLE tasks (
   "_id" serial NOT NULL,
   "description" varchar NOT NULL,
-  "completed" BOOLEAN NOT NULL
+  "completed" BOOLEAN NOT NULL,
   "worker_id" bigint,
   CONSTRAINT "tasks_pk" PRIMARY KEY ("_id")
 ) WITH (
