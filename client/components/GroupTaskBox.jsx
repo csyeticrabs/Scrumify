@@ -17,7 +17,7 @@ const GroupTaskBox = (props) => {
             {taskList.map((task) => 
               (
                 <tr className="task">
-                  <td>Description: {task.description}</td>
+                  <td>{task.description}</td>
                   {/* <td>
                     Status:
                     {task.completed === false ? ' In Progress' : ' Completed'}
