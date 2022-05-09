@@ -89,38 +89,11 @@ class App extends Component {
   }
 
   handleSelect(e) {
-    console.log('Current user is ', JSON.parse(e));
     return this.setState({
       ...this.state,
-      currentUser: {...JSON.parse(e)}
+      currentUser: JSON.parse(e),
     });
   }
-
-  // Method to edit a task inside our app.
-  // editTask(id, updatedTask) { //pass in the updatedTask as an arg or create new input field like in newTask below
-  //   const updatedTaskList = [...this.state.tasks];
-  //   const index = taskList.findIndex(task => task._id === id)
-  //   updatedTaskList[index] = updatedTask;
-  //   fetch(`/api/tasks/${id}`, {
-  //     method: 'PUT',
-  //     headers: {
-  //       'Content-Type': 'Application/JSON'
-  //     },
-  //     body: JSON.stringify(updatedTaskList)
-  //   })
-  //   .then(data => data.json())
-  //   .then(() => {
-  //     this.setState(prevState => {
-  //       return {
-  //         ...this.state,
-  //         tasks: updatedTaskList,
-  //       }
-  //     })
-  //   })
-  //   .catch(err => {
-  //     console.log(`Error editing a task!: ${err}`)
-  //   });
-  // }
 
   updateTask(id) {
     fetch('/api', {
@@ -157,7 +130,7 @@ class App extends Component {
     const newTask = {
       description: this.state.currentTaskDescription,
       completed: false, //hardcoded default status
-      worker_id: this.state.currentUser.id, //hardcoded default # "nice" - Tony
+      worker_id: this.state.currentUser._id, //hardcoded default # "nice" - Tony
     };
     // sending the new task to the db
     // expecting to receive nothing back?
@@ -211,7 +184,7 @@ class App extends Component {
           <MyNav />
           <div className="container">
             <Routes>
-           
+           {this.state.tasks.length > 0 && this.state.users.length > 0 && (
               <Route
                 path="/"
                 element={
@@ -226,7 +199,7 @@ class App extends Component {
                   />
                 }
               ></Route>
-
+              )}
               {this.state.tasks.length > 0 && this.state.users.length > 0  && (
                 <Route
                   path="/mytask"
