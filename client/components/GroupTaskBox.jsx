@@ -6,7 +6,7 @@ const GroupTaskBox = (props) => {
   })
   return (
     <Fragment>
-        <table class="table table-hover my-5">
+        <table class="table table-hover my-2">
           <thead>
             <tr>
               <th scope="col">Description</th>
