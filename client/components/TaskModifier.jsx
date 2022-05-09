@@ -28,6 +28,7 @@ return (
                     <p>Description: {task.description}</p>
                     <p>Status: {task.completed}</p>
                     <button className="deleteTaskButton" onClick={() => props.deleteTask(task._id)}>Delete this Task</button>
+                    {/* <button className="completeTaskButton" onClick={() => props.completeTask(task._id)}>Mark as Complete</button> */}
                 </div>)
             }
             )}
