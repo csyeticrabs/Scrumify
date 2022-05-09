@@ -18,6 +18,8 @@ class App extends Component {
       // currentTaskWorkerId: 0,
       // currentTaskStatus: false //put/patch update request status from
       currentUser: {name: 'Select User', id: 0},
+      userReady: false,
+      
     };
     this.getAllInfo = this.getAllInfo.bind(this);
     this.handleSetTask = this.handleSetTask.bind(this);
@@ -27,6 +29,7 @@ class App extends Component {
     this.deleteTask = this.deleteTask.bind(this);
     this.updateTask = this.updateTask.bind(this);
     this.getAllUsers = this.getAllUsers.bind(this);
+    this.getUserTasks = this.getUserTasks.bind(this)
   }
 
   //wrap this in useEffect?
@@ -34,6 +37,7 @@ class App extends Component {
   componentDidMount() {
     this.getAllInfo();
     this.getAllUsers();
+    
   }
   //get all users/task info every time a component updates? idk if this makes sense
   componentDidUpdate() {
@@ -47,6 +51,25 @@ class App extends Component {
   //   .then(data => console.log(data))
   // }
 
+  getUserTasks() {
+    console.log('USERS BEFORE SETTING STATE', this.state.users)
+    const copyOfUsers = [...this.state.users]; 
+    for(let i = 0; i < copyOfUsers.length; ++i) {
+      const userTasks = [];
+      for(let j = 0; j < this.state.tasks.length; ++j) {
+        if(copyOfUsers[i]._id === Number(this.state.tasks[j].worker_id)) userTasks.push(this.state.tasks[j]);
+        copyOfUsers[i].totalTasks = userTasks;
+        }
+      }
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        users: copyOfUsers,
+        userReady: true,
+      }
+    })
+    console.log('after setting user tasks', this.state.users);
+  }
   
   getAllUsers() {
     fetch('/users', )
@@ -57,6 +80,8 @@ class App extends Component {
           ...prevState,
           users: allUsers,
       }})
+    }).then(() => {
+      this.getUserTasks();
     })
     .catch((err) => {
       console.log(`Error fetching user data! Error: ${err}`)
@@ -184,18 +209,19 @@ class App extends Component {
           <MyNav />
           <div className="container">
             <Routes>
-           {this.state.tasks.length > 0 && this.state.users.length > 0 && (
+           {this.state.userReady && (
               <Route
                 path="/"
                 element={
                   <MainContainer
-                    getAllInfo={this.getAllInfo}
+                    // getAllInfo={this.getAllInfo}
                     // editTask = {this.editTask}
-                    addTask={this.addTask}
-                    handleSetTask={this.handleSetTask}
-                    deleteTask={this.deleteTask}
+                    // addTask={this.addTask}
+                    // handleSetTask={this.handleSetTask}
+                    // deleteTask={this.deleteTask}
                     data={this.state}
-                    users={this.getAllUsers}
+                    // users={this.getAllUsers}
+                    
                   />
                 }
               ></Route>

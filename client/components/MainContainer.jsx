@@ -6,29 +6,29 @@ import UserTaskBox from './UserTaskBox.jsx';
 const MainContainer = props => {
     // Make sure you to do conditional rendering to make sure
   const [progress, setProgress] = useState(0);
-  const [userTaskArray, setUserTaskArray] = useState([...props.data.users])
-  const [userReady, setUserReady] = useState(false);
+  // const [userTaskArray, setUserTaskArray] = useState([...props.data.users])
+  // const [userReady, setUserReady] = useState(false);
 
   const percentage = ((props.data.tasks.filter(task => task.completed === true).length / props.data.tasks.length)*100).toFixed(2);
   useEffect(() => {
     setProgress(percentage);
   })
 
-  const copyOfUsers = [...props.data.users];
-  useEffect(() => {
-    console.log('USERS FROM PARENT COMPONENT', props.data.users)
-    const copyOfUsers = [...userTaskArray];
-    for(let i = 0; i < copyOfUsers.length; ++i) {
-      const userTasks = []
-      for(let j = 0; j < props.data.tasks.length; ++j) {
-        if(copyOfUsers[i]._id === Number(props.data.tasks[j].worker_id)) userTasks.push(props.data.tasks[j]);
-        copyOfUsers[i].totalTasks = userTasks;
-        }
-      }
-    setUserTaskArray(copyOfUsers);
-    setUserReady(true);
-    console.log('STATE TOTAL TASKS IS',userTaskArray)
-  }, [])
+  // const copyOfUsers = [...props.data.users];
+  // useEffect(() => {
+  //   console.log('USERS FROM PARENT COMPONENT', props.data.users)
+  //   const copyOfUsers = [...userTaskArray];
+  //   for(let i = 0; i < copyOfUsers.length; ++i) {
+  //     const userTasks = []
+  //     for(let j = 0; j < props.data.tasks.length; ++j) {
+  //       if(copyOfUsers[i]._id === Number(props.data.tasks[j].worker_id)) userTasks.push(props.data.tasks[j]);
+  //       copyOfUsers[i].totalTasks = userTasks;
+  //       }
+  //     }
+  //   setUserTaskArray(copyOfUsers);
+  //   setUserReady(true);
+  //   console.log('STATE TOTAL TASKS IS',userTaskArray)
+  // }, [])
 
 // useEffect(() => {
 //     setUserReady(true);
@@ -45,13 +45,14 @@ const MainContainer = props => {
           <GroupTaskBox 
             data = {props.data}
           />
-          
-          {userReady && userTaskArray.map(user => {
+          <div className='row'>
+          {props.data.users.map(user => {
             return <UserTaskBox
             name = {user.name}
             totalTasks = {user.totalTasks}
-          />
+            />
           })}
+        </div>
           
         </div>
       </Fragment>
