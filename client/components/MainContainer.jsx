@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment } from 'react';
 import ProgressBar from 'react-bootstrap/ProgressBar'
 import GroupTaskBox from './GroupTaskBox.jsx'
 import UserTaskBox from './UserTaskBox.jsx';
+import DropDown from './DropDown.jsx'
 
 const MainContainer = props => {
     // Make sure you to do conditional rendering to make sure
@@ -14,35 +15,18 @@ const MainContainer = props => {
     setProgress(percentage);
   })
 
-  // const copyOfUsers = [...props.data.users];
-  // useEffect(() => {
-  //   console.log('USERS FROM PARENT COMPONENT', props.data.users)
-  //   const copyOfUsers = [...userTaskArray];
-  //   for(let i = 0; i < copyOfUsers.length; ++i) {
-  //     const userTasks = []
-  //     for(let j = 0; j < props.data.tasks.length; ++j) {
-  //       if(copyOfUsers[i]._id === Number(props.data.tasks[j].worker_id)) userTasks.push(props.data.tasks[j]);
-  //       copyOfUsers[i].totalTasks = userTasks;
-  //       }
-  //     }
-  //   setUserTaskArray(copyOfUsers);
-  //   setUserReady(true);
-  //   console.log('STATE TOTAL TASKS IS',userTaskArray)
-  // }, [])
-
-// useEffect(() => {
-//     setUserReady(true);
-//     console.log('NEW TASKS ARRAY FOR USER IS ', userTaskArray);
-// }, [userTaskArray])
-
-
-
     return (
       <Fragment>
-        <div>
-          <h1>Progress</h1>
+
+          <h1>Tasks in Progress</h1>
           <ProgressBar animated now={progress} striped variant="success" label={`${progress}% Completed`}/>
-          <GroupTaskBox 
+          <DropDown
+            data = {props.data}
+            handleSelectUser={props.handleSelectUser}
+            handleSelectTask={props.handleSelectTask}
+            handleAssignTask={props.handleAssignTask}
+          />
+          <GroupTaskBox
             data = {props.data}
           />
           <div className='row'>
@@ -54,7 +38,6 @@ const MainContainer = props => {
           })}
         </div>
           
-        </div>
       </Fragment>
     );
   };

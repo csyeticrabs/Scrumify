@@ -5,8 +5,6 @@ import { Form, Button, Dropdown } from 'react-bootstrap';
 // New Page for Add and Delete Task
 
 const TaskModifier = (props) => {
-  console.log('All current users', props.data.users)
-  
   return (
     <section className="mt-5">
       
@@ -21,7 +19,7 @@ const TaskModifier = (props) => {
           placeholder="Create a New Task"
         />
         
-        <Dropdown onSelect={props.handleSelect}>
+        <Dropdown onSelect={props.handleSelectUser}>
           <Dropdown.Toggle variant="warning" id="dropdown-basic">
             {props.data.currentUser.name}
           </Dropdown.Toggle>
