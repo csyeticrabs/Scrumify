@@ -217,14 +217,14 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Fragment>
-          <MyNav />
-          <div className="container">
+          <MyNav/>
+          <div className="container mt-5">
             <Routes>
            {this.state.userReady && (
               <Route
                 path="/"
                 element={
-                  <MainContainer
+                  <MainContainer className='mt-5'
                     getAllInfo={this.getAllInfo}
                     handleSetTask={this.handleSetTask}
                     handleSelectUser={this.handleSelectUser}

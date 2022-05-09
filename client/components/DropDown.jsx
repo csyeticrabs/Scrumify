@@ -3,10 +3,9 @@ import { Button, Dropdown } from 'react-bootstrap';
 
 const DropDown = (props) => {
   const unassignedTasks = props.data.tasks.filter(task => task.worker_id === null)
-  console.log('UNASSIGNED TASKS', unassignedTasks);
   return (
-    <Fragment>
-        <Dropdown onSelect={props.handleSelectTask}>
+    <Fragment >
+        <Dropdown onSelect={props.handleSelectTask} className='me-3'>
           <Dropdown.Toggle variant="warning" id="dropdown-basic">
             {props.data.currentTask.description}
           </Dropdown.Toggle>
@@ -18,7 +17,7 @@ const DropDown = (props) => {
           </Dropdown.Menu>
         </Dropdown> 
 
-        <Dropdown onSelect={props.handleSelectUser}>
+        <Dropdown onSelect={props.handleSelectUser} className='me-3'>
           <Dropdown.Toggle variant="warning" id="dropdown-basic">
             {props.data.currentUser.name}
           </Dropdown.Toggle>
