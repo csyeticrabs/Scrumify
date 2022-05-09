@@ -2,7 +2,7 @@ import React, { Component, useState, useEffect, Fragment } from 'react';
 import MainContainer from './components/MainContainer.jsx';
 import TaskModifier from './components/TaskModifier.jsx';
 import MyNav from './components/MyNav.jsx';
-import 
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 // Class/Constructor version
 
@@ -14,6 +14,10 @@ import
 // }];
 
 
+
+
+
+// Class/Constructor version
 class App extends Component {
   constructor(props) {
     super(props);
@@ -25,25 +29,53 @@ class App extends Component {
       currentTaskDescription: 'get this fucking app working',
       // currentTaskWorkerId: 0,
       // currentTaskStatus: false //put/patch update request status from
+      currentUser: {name: 'Select User', id: 0},
     };
     this.getAllInfo = this.getAllInfo.bind(this);
     this.handleSetTask = this.handleSetTask.bind(this);
+    this.handleSelect = this.handleSelect.bind(this);
     // this.editTask = this.editTask.bind(this);
     this.addTask = this.addTask.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
+    this.updateTask = this.updateTask.bind(this);
+    this.getAllUsers = this.getAllUsers.bind(this);
   }
 
   //wrap this in useEffect?
   //get all users/tasks info on initial render from db to update state
   componentDidMount() {
     this.getAllInfo();
+    this.getAllUsers();
   }
   //get all users/task info every time a component updates? idk if this makes sense
   componentDidUpdate() {
     // this.getAllInfo();
   }
 
-  // Method to get all information from DB about our tasks and users
+  //Get all users 
+  // getAllUsers() {
+  //   fetch('/users')
+  //   .then(res => res.json())
+  //   .then(data => console.log(data))
+  // }
+
+  
+  getAllUsers() {
+    fetch('/users', )
+    .then(res => res.json())
+    .then((allUsers) => {
+      this.setState(prevState => {
+        return {
+          ...prevState,
+          users: allUsers,
+      }})
+    })
+    .catch((err) => {
+      console.log(`Error fetching user data! Error: ${err}`)
+    })
+  }
+
+  // Get all tasks info from database
   getAllInfo() {
     fetch('/api', {
       method: 'GET',
@@ -54,17 +86,25 @@ class App extends Component {
           ...this.state,
           tasks: allTasks,
         });
-        return;
       })
       .catch((err) => {
         console.log(`Error fetching all task and user data! Error: ${err}`);
       });
   }
 
+
   handleSetTask(e) {
     return this.setState({
       ...this.state,
       currentTaskDescription: e.target.value,
+    });
+  }
+
+  handleSelect(e) {
+    console.log('Current user is ', JSON.parse(e));
+    return this.setState({
+      ...this.state,
+      currentUser: {...JSON.parse(e)}
     });
   }
 
@@ -96,7 +136,7 @@ class App extends Component {
 
   updateTask(id) {
     fetch('/api', {
-      method: 'PATCH',
+      method: 'PUT',
       headers: {
         'Content-Type': 'Application/JSON',
       },
@@ -106,14 +146,19 @@ class App extends Component {
       .then(() => {
         this.setState((prevState) => {
           return {
-            ...this.state,
-            currentTaskStatus: true,
-            tasks: (prevState.tasks[id].completed = true),
+            ...prevState,
+            tasks: prevState.tasks.map(task => task._id === id ? {...task, completed: true} : {...task}
+            )
+            // tasks: prevState.tasks.reduce((acc, curr) => {
+            //   if (curr._id === id) curr.completed = true;
+            //   acc.push(curr);
+            //   return acc;
+            // }, []),
           };
         });
       })
       .catch((err) => {
-        console.log(`Error fetching deleting task! Error: ${err}`);
+        console.log(`Error fetching putting task! Error: ${err}`);
       });
   }
 
@@ -122,10 +167,9 @@ class App extends Component {
     event.preventDefault();
 
     const newTask = {
-      _id: Math.floor(Math.random() * 200), //autocreated by database?
       description: this.state.currentTaskDescription,
       completed: false, //hardcoded default status
-      worker_id: 2, //hardcoded default # "nice" - Tony
+      worker_id: this.state.currentUser.id, //hardcoded default # "nice" - Tony
     };
     // sending the new task to the db
     // expecting to receive nothing back?
@@ -137,29 +181,20 @@ class App extends Component {
       body: JSON.stringify(newTask),
     })
       .then(() => {
+        // if you use a callback inside setState the parameter or whatever you name it will always be the previousState.
         this.setState((prevState) => {
           return {
             ...prevState,
-            tasks: prevState.tasks.push(newTask),
+            tasks: [newTask, ...prevState.tasks],
           };
         });
       })
-      // .then(() => {
-      //   this.setState({
-      //     ...this.state,
-      //     tasks: this.state.tasks.push(newTask),
-      //   });
-      // })
-
       .catch((err) => {
         console.log(`Error adding a new task!: ${err}`);
       });
-    window.location = '/';
-    // this.forceUpdate();
-    // event.target.reset();
   }
-  // Method to delete a task.
-  //we pass in the task's primary (unique key)
+  
+  //Delete task with the same ID as parameter
   deleteTask(id) {
     fetch('/api', {
       method: 'DELETE',
@@ -181,35 +216,51 @@ class App extends Component {
       });
   }
 
-  //put or patch request (update the current task status from not done to completed
-  // this.state.currentTaskStatus = true;
-
   render() {
     return (
-      <Fragment>
-        <MyNav />
-        {this.state.tasks.length > 0 && (
-          <div>
-            <MainContainer
-              getAllInfo={this.getAllInfo}
-              // editTask = {this.editTask}
-              addTask={this.addTask}
-              handleSetTask={this.handleSetTask}
-              deleteTask={this.deleteTask}
-              data={this.state}
-            />
+      <BrowserRouter>
+        <Fragment>
+          <MyNav />
+          <div className="container">
+            <Routes>
+           
+              <Route
+                path="/"
+                element={
+                  <MainContainer
+                    getAllInfo={this.getAllInfo}
+                    // editTask = {this.editTask}
+                    addTask={this.addTask}
+                    handleSetTask={this.handleSetTask}
+                    deleteTask={this.deleteTask}
+                    data={this.state}
+                    users={this.getAllUsers}
+                  />
+                }
+              ></Route>
 
-            <TaskModifier
-              getAllInfo={this.getAllInfo}
-              //  editTask = {this.editTask}
-              addTask={this.addTask}
-              handleSetTask={this.handleSetTask}
-              deleteTask={this.deleteTask}
-              data={this.state}
-            />
+              {this.state.tasks.length > 0 && this.state.users.length > 0  && (
+                <Route
+                  path="/mytask"
+                  element={
+                    <TaskModifier
+                      getAllInfo={this.getAllInfo}
+                      //  editTask = {this.editTask}
+                      addTask={this.addTask}
+                      handleSetTask={this.handleSetTask}
+                      deleteTask={this.deleteTask}
+                      data={this.state}
+                      updateTask={this.updateTask}
+                      handleSelect={this.handleSelect}
+
+                    />
+                  }
+                ></Route>
+              )}
+            </Routes>
           </div>
-        )}
-      </Fragment>
+        </Fragment>
+      </BrowserRouter>
     );
   }
 }
