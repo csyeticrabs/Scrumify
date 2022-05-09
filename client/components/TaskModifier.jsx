@@ -8,13 +8,13 @@ const TaskModifier = (props) => {
   return (
     <section className="mt-5">
       
-      <div class="input-group input-group-lg">
+      <div class="input-group input-group-md">
         <input 
           type="text" 
           class="form-control" 
           aria-label="Text input with dropdown button" 
           name="description"
-          aria-describedby="inputGroup-sizing-lg"
+          aria-describedby="inputGroup-sizing-md"
           onChange={props.handleSetTask}
           placeholder="Create a New Task"
         />
@@ -39,7 +39,7 @@ const TaskModifier = (props) => {
           </Button>
       </div>
 
-      <div className="allTasks">
+      <div className="allTasks mt-5">
         <table class="table table-hover">
           <thead>
             <tr>

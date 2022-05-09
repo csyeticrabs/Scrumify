@@ -61,7 +61,8 @@ class App extends Component {
           ...prevState,
           users: allUsers,
       }})
-    }).then(() => {
+    })
+    .then(() => {
       this.getUserTasks();
     })
     .catch((err) => {
@@ -94,7 +95,6 @@ class App extends Component {
   }
 
   handleSelectUser(e) {
-    console.log('selected user is ', JSON.parse(e));
     return this.setState({
       ...this.state,
       currentUser: JSON.parse(e),
@@ -102,7 +102,6 @@ class App extends Component {
   }
 
   handleSelectTask(e){
-    console.log('selected task is ', JSON.parse(e))
     return this.setState({
       ...this.state,
       currentTask: JSON.parse(e),
@@ -230,14 +229,13 @@ class App extends Component {
                     handleSelectUser={this.handleSelectUser}
                     handleSelectTask={this.handleSelectTask}
                     handleAssignTask={this.handleAssignTask}
-                    
                     data={this.state}
                     users={this.getAllUsers}
                   />
                 }
               ></Route>
               )}
-              {this.state.tasks.length > 0 && this.state.users.length > 0  && (
+              {this.state.userReady && (
                 <Route
                   path="/mytask"
                   element={
