@@ -115,9 +115,11 @@ class App extends Component {
         this.setState((prevState) => {
           return {
             ...prevState,
-            // tasks: prevState.tasks.map(task => {
-            //   return task._id === id ? {...task, task.completed: true} : {...task}
-            // })
+            // tasks: prevState.tasks.map((task) => {
+            //   return task._id === id
+            //     ? { ...task, completed: true }
+            //     : { ...task };
+            // }),
             tasks: prevState.tasks.reduce((acc, curr) => {
               if (curr._id === id) curr.completed = true;
               acc.push(curr);
