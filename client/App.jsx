@@ -13,9 +13,8 @@ class App extends Component {
       users: [],
       tasks: [],
       currentTask: { id: undefined, description: 'Select Task' },
-      currentUser: {name: 'Select User', id: undefined},
+      currentUser: { name: 'Select User', id: undefined },
       userReady: false,
-      
     };
     this.getAllInfo = this.getAllInfo.bind(this);
     this.handleSetTask = this.handleSetTask.bind(this);
@@ -35,39 +34,41 @@ class App extends Component {
   }
 
   getUserTasks() {
-    const copyOfUsers = [...this.state.users]; 
-    for(let i = 0; i < copyOfUsers.length; ++i) {
+    const copyOfUsers = [...this.state.users];
+    for (let i = 0; i < copyOfUsers.length; ++i) {
       const userTasks = [];
-      for(let j = 0; j < this.state.tasks.length; ++j) {
-        if(copyOfUsers[i]._id === Number(this.state.tasks[j].worker_id)) userTasks.push(this.state.tasks[j]);
+      for (let j = 0; j < this.state.tasks.length; ++j) {
+        if (copyOfUsers[i]._id === Number(this.state.tasks[j].worker_id))
+          userTasks.push(this.state.tasks[j]);
         copyOfUsers[i].totalTasks = userTasks;
-        }
       }
-    this.setState(prevState => {
+    }
+    this.setState((prevState) => {
       return {
         ...prevState,
         users: copyOfUsers,
         userReady: true,
-      }
-    })
+      };
+    });
   }
-  
+
   getAllUsers() {
-    fetch('/users', )
-    .then(res => res.json())
-    .then((allUsers) => {
-      this.setState(prevState => {
-        return {
-          ...prevState,
-          users: allUsers,
-      }})
-    })
-    .then(() => {
-      this.getUserTasks();
-    })
-    .catch((err) => {
-      console.log(`Error fetching user data! Error: ${err}`)
-    })
+    fetch('/users')
+      .then((res) => res.json())
+      .then((allUsers) => {
+        this.setState((prevState) => {
+          return {
+            ...prevState,
+            users: allUsers,
+          };
+        });
+      })
+      .then(() => {
+        this.getUserTasks();
+      })
+      .catch((err) => {
+        console.log(`Error fetching user data! Error: ${err}`);
+      });
   }
 
   getAllInfo() {
@@ -86,11 +87,10 @@ class App extends Component {
       });
   }
 
-
   handleSetTask(e) {
     return this.setState({
       ...this.state,
-      currentTask: {description: e.target.value},
+      currentTask: { description: e.target.value },
     });
   }
 
@@ -101,37 +101,45 @@ class App extends Component {
     });
   }
 
-  handleSelectTask(e){
+  handleSelectTask(e) {
     return this.setState({
       ...this.state,
       currentTask: JSON.parse(e),
-    })
+    });
   }
 
   handleAssignTask() {
     fetch('/users', {
       method: 'PUT',
       headers: {
-        'Content-Type': 'Application/JSON'
+        'Content-Type': 'Application/JSON',
       },
-      body: JSON.stringify({ task_id: this.state.currentTask._id, worker_id: this.state.currentUser._id })
+      body: JSON.stringify({
+        task_id: this.state.currentTask._id,
+        worker_id: this.state.currentUser._id,
+      }),
     })
-    .then(() => {
-      const updatedUsers = this.state.users.map(user => {
-        return user._id === this.state.currentUser._id ? {...user, totalTasks: [...user.totalTasks, this.state.currentTask]} : {...user}
+      .then(() => {
+        const updatedUsers = this.state.users.map((user) => {
+          return user._id === this.state.currentUser._id
+            ? {
+                ...user,
+                totalTasks: [...user.totalTasks, this.state.currentTask],
+              }
+            : { ...user };
+        });
+        this.setState((prevState) => {
+          return {
+            ...prevState,
+            users: updatedUsers,
+            currentTask: { id: undefined, description: 'Select Task' },
+            currentUser: { name: 'Select User', id: undefined },
+          };
+        });
       })
-      this.setState(prevState => {
-        return {
-        ...prevState,
-        users: updatedUsers,
-        currentTask:{ id: undefined, description: 'Select Task' },
-        currentUser: {name: 'Select User', id: undefined},
-        }
-      })      
-    })
-    .catch((err) => {
-      console.log('Failed to assign task to user')
-    })
+      .catch((err) => {
+        console.log('Failed to assign task to user');
+      });
   }
 
   updateTask(id) {
@@ -147,8 +155,11 @@ class App extends Component {
         this.setState((prevState) => {
           return {
             ...prevState,
-            tasks: prevState.tasks.map(task => task._id === id ? {...task, completed: true} : {...task}
-            )
+            tasks: prevState.tasks.map((task) =>
+              task._id === id ? { ...task, completed: true } : { ...task }
+            ),
+
+            //FOR REDUCE FANS (FULLY FUNCTIONAL, WITH LOVE FROM JU)
             // tasks: prevState.tasks.reduce((acc, curr) => {
             //   if (curr._id === id) curr.completed = true;
             //   acc.push(curr);
@@ -168,7 +179,7 @@ class App extends Component {
 
     const newTask = {
       description: this.state.currentTask.description,
-      completed: false, //hardcoded default status
+      completed: false,
       worker_id: this.state.currentUser._id || undefined,
     };
     fetch('/api', {
@@ -182,6 +193,8 @@ class App extends Component {
         this.setState((prevState) => {
           return {
             ...prevState,
+            currentTask: { id: undefined, description: 'Select Task' },
+
             tasks: [newTask, ...prevState.tasks],
           };
         });
@@ -190,7 +203,7 @@ class App extends Component {
         console.log(`Error adding a new task!: ${err}`);
       });
   }
-  
+
   deleteTask(id) {
     fetch('/api', {
       method: 'DELETE',
@@ -216,24 +229,25 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Fragment>
-          <MyNav/>
+          <MyNav />
           <div className="container mt-5">
             <Routes>
-           {this.state.userReady && (
-              <Route
-                path="/"
-                element={
-                  <MainContainer className='mt-5'
-                    getAllInfo={this.getAllInfo}
-                    handleSetTask={this.handleSetTask}
-                    handleSelectUser={this.handleSelectUser}
-                    handleSelectTask={this.handleSelectTask}
-                    handleAssignTask={this.handleAssignTask}
-                    data={this.state}
-                    users={this.getAllUsers}
-                  />
-                }
-              ></Route>
+              {this.state.userReady && (
+                <Route
+                  path="/"
+                  element={
+                    <MainContainer
+                      className="mt-5"
+                      getAllInfo={this.getAllInfo}
+                      handleSetTask={this.handleSetTask}
+                      handleSelectUser={this.handleSelectUser}
+                      handleSelectTask={this.handleSelectTask}
+                      handleAssignTask={this.handleAssignTask}
+                      data={this.state}
+                      users={this.getAllUsers}
+                    />
+                  }
+                ></Route>
               )}
               {this.state.userReady && (
                 <Route
@@ -247,7 +261,6 @@ class App extends Component {
                       data={this.state}
                       updateTask={this.updateTask}
                       handleSelectUser={this.handleSelectUser}
-
                     />
                   }
                 ></Route>
