@@ -4,6 +4,8 @@ import TaskModifier from './components/TaskModifier.jsx';
 import MyNav from './components/MyNav.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
+//sorry for not refactoring to hooks y'all lol
+
 // Class/Constructor version
 class App extends Component {
   constructor(props) {
