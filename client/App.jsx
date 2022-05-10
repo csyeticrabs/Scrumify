@@ -5,19 +5,6 @@ import MyNav from './components/MyNav.jsx';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
 // Class/Constructor version
-
-// const tasks = [{
-//   _id: Math.random(), //autocreated by database?
-//   description: "fork ma lyfe",
-//   completed: false, //a boolean
-//   worker_id: Math.random(), //foreign key
-// }];
-
-
-
-
-
-// Class/Constructor version
 class App extends Component {
   constructor(props) {
     super(props);
@@ -102,6 +89,7 @@ class App extends Component {
 
   handleSelect(e) {
     console.log('Current user is ', JSON.parse(e));
+    console.log({...JSON.parse(e)})
     return this.setState({
       ...this.state,
       currentUser: {...JSON.parse(e)}
