@@ -4,7 +4,7 @@ const apiController = {};
 
 apiController.getTasks = async (req, res, next) => {
   try {
-    const str = `SELECT * FROM tasks;`;
+    const str = `SELECT tasks._id, people.name, description, completed, worker_id FROM tasks LEFT JOIN people ON worker_id = people._id;`;
     const allTasks = await db.query(str);
     res.locals.allTasks = allTasks.rows;
     return next();

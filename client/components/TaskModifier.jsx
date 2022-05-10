@@ -5,43 +5,21 @@ import { Form, Button, Dropdown } from 'react-bootstrap';
 // New Page for Add and Delete Task
 
 const TaskModifier = (props) => {
-  console.log('All current users', props.data.users)
-  
   return (
     <section className="mt-5">
-      {/* <div class="input-group input-group-lg"> */}
-        {/* <div class="input-group-prepend"> */}
-        {/* </div>
-            <input
-              name="description"
-              type="text"
-              class="form-control"
-              aria-label="Sizing example input"
-              aria-describedby="inputGroup-sizing-lg"
-              onChange={props.handleSetTask}
-              placeholder="Create a New Task"
-            />
-          <Button
-            variant="primary"
-            type="submit"
-            onClick={(e) => props.addTask(e)}
-          >
-            Add Me!
-          </Button>
-      </div> */}
-      {/* Dropdown Section  */}
-      <div class="input-group input-group-lg">
+      
+      <div class="input-group input-group-md">
         <input 
           type="text" 
           class="form-control" 
           aria-label="Text input with dropdown button" 
           name="description"
-          aria-describedby="inputGroup-sizing-lg"
+          aria-describedby="inputGroup-sizing-md"
           onChange={props.handleSetTask}
           placeholder="Create a New Task"
         />
         
-        <Dropdown onSelect={props.handleSelect}>
+        <Dropdown onSelect={props.handleSelectUser}>
           <Dropdown.Toggle variant="warning" id="dropdown-basic">
             {props.data.currentUser.name}
           </Dropdown.Toggle>
@@ -50,9 +28,6 @@ const TaskModifier = (props) => {
             {props.data.users.map((user, index) => { 
                return <Dropdown.Item href={`#action/action-${index}`} eventKey={JSON.stringify(user)}>{user.name}</Dropdown.Item>
             })}
-            {/* <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
-            <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
-            <Dropdown.Item href="#/action-3">Something else</Dropdown.Item> */}
           </Dropdown.Menu>
         </Dropdown> 
         <Button
@@ -64,21 +39,7 @@ const TaskModifier = (props) => {
           </Button>
       </div>
 
-
-
-
-      {/* <div>
-        <form className="taskForm" onSubmit={(e) => props.addTask(e)}>
-          <input
-            name="description"
-            // value={description}
-            // Handler function where we grab the input field values -> updates the currentTask value in state
-            onChange={props.handleSetTask}
-            placeholder="Create a New Task"
-          />
-        </form>
-      </div> */}
-      <div className="allTasks">
+      <div className="allTasks mt-5">
         <table class="table table-hover">
           <thead>
             <tr>
@@ -120,16 +81,5 @@ const TaskModifier = (props) => {
     </section>
   );
 };
-
-// Then on click that wills end that task value to the SQL DB through fetch request.
-//delete task
-
-{
-  /* <input
-        name='user'
-        value={currentTaskWorkerId}
-    > 
-    </input> */
-}
 
 export default TaskModifier;

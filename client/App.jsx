@@ -8,44 +8,48 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 class App extends Component {
   constructor(props) {
     super(props);
-    //should get data from all current users and tasks (as arrays of objects)
     this.state = {
       users: [],
       tasks: [],
-      // currentTaskId: 0,
-      currentTaskDescription: 'get this fucking app working',
-      // currentTaskWorkerId: 0,
-      // currentTaskStatus: false //put/patch update request status from
-      currentUser: {name: 'Select User', id: 0},
+      currentTask: { id: undefined, description: 'Select Task' },
+      currentUser: {name: 'Select User', id: undefined},
+      userReady: false,
+      
     };
     this.getAllInfo = this.getAllInfo.bind(this);
     this.handleSetTask = this.handleSetTask.bind(this);
-    this.handleSelect = this.handleSelect.bind(this);
-    // this.editTask = this.editTask.bind(this);
+    this.handleSelectUser = this.handleSelectUser.bind(this);
     this.addTask = this.addTask.bind(this);
     this.deleteTask = this.deleteTask.bind(this);
     this.updateTask = this.updateTask.bind(this);
     this.getAllUsers = this.getAllUsers.bind(this);
+    this.getUserTasks = this.getUserTasks.bind(this);
+    this.handleSelectTask = this.handleSelectTask.bind(this);
+    this.handleAssignTask = this.handleAssignTask.bind(this);
   }
 
-  //wrap this in useEffect?
-  //get all users/tasks info on initial render from db to update state
   componentDidMount() {
     this.getAllInfo();
     this.getAllUsers();
   }
-  //get all users/task info every time a component updates? idk if this makes sense
-  componentDidUpdate() {
-    // this.getAllInfo();
+
+  getUserTasks() {
+    const copyOfUsers = [...this.state.users]; 
+    for(let i = 0; i < copyOfUsers.length; ++i) {
+      const userTasks = [];
+      for(let j = 0; j < this.state.tasks.length; ++j) {
+        if(copyOfUsers[i]._id === Number(this.state.tasks[j].worker_id)) userTasks.push(this.state.tasks[j]);
+        copyOfUsers[i].totalTasks = userTasks;
+        }
+      }
+    this.setState(prevState => {
+      return {
+        ...prevState,
+        users: copyOfUsers,
+        userReady: true,
+      }
+    })
   }
-
-  //Get all users 
-  // getAllUsers() {
-  //   fetch('/users')
-  //   .then(res => res.json())
-  //   .then(data => console.log(data))
-  // }
-
   
   getAllUsers() {
     fetch('/users', )
@@ -57,12 +61,14 @@ class App extends Component {
           users: allUsers,
       }})
     })
+    .then(() => {
+      this.getUserTasks();
+    })
     .catch((err) => {
       console.log(`Error fetching user data! Error: ${err}`)
     })
   }
 
-  // Get all tasks info from database
   getAllInfo() {
     fetch('/api', {
       method: 'GET',
@@ -83,44 +89,49 @@ class App extends Component {
   handleSetTask(e) {
     return this.setState({
       ...this.state,
-      currentTaskDescription: e.target.value,
+      currentTask: {description: e.target.value},
     });
   }
 
-  handleSelect(e) {
-    console.log('Current user is ', JSON.parse(e));
-    console.log({...JSON.parse(e)})
+  handleSelectUser(e) {
     return this.setState({
       ...this.state,
-      currentUser: {...JSON.parse(e)}
+      currentUser: JSON.parse(e),
     });
   }
 
-  // Method to edit a task inside our app.
-  // editTask(id, updatedTask) { //pass in the updatedTask as an arg or create new input field like in newTask below
-  //   const updatedTaskList = [...this.state.tasks];
-  //   const index = taskList.findIndex(task => task._id === id)
-  //   updatedTaskList[index] = updatedTask;
-  //   fetch(`/api/tasks/${id}`, {
-  //     method: 'PUT',
-  //     headers: {
-  //       'Content-Type': 'Application/JSON'
-  //     },
-  //     body: JSON.stringify(updatedTaskList)
-  //   })
-  //   .then(data => data.json())
-  //   .then(() => {
-  //     this.setState(prevState => {
-  //       return {
-  //         ...this.state,
-  //         tasks: updatedTaskList,
-  //       }
-  //     })
-  //   })
-  //   .catch(err => {
-  //     console.log(`Error editing a task!: ${err}`)
-  //   });
-  // }
+  handleSelectTask(e){
+    return this.setState({
+      ...this.state,
+      currentTask: JSON.parse(e),
+    })
+  }
+
+  handleAssignTask() {
+    fetch('/users', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'Application/JSON'
+      },
+      body: JSON.stringify({ task_id: this.state.currentTask._id, worker_id: this.state.currentUser._id })
+    })
+    .then(() => {
+      const updatedUsers = this.state.users.map(user => {
+        return user._id === this.state.currentUser._id ? {...user, totalTasks: [...user.totalTasks, this.state.currentTask]} : {...user}
+      })
+      this.setState(prevState => {
+        return {
+        ...prevState,
+        users: updatedUsers,
+        currentTask:{ id: undefined, description: 'Select Task' },
+        currentUser: {name: 'Select User', id: undefined},
+        }
+      })      
+    })
+    .catch((err) => {
+      console.log('Failed to assign task to user')
+    })
+  }
 
   updateTask(id) {
     fetch('/api', {
@@ -155,12 +166,10 @@ class App extends Component {
     event.preventDefault();
 
     const newTask = {
-      description: this.state.currentTaskDescription,
+      description: this.state.currentTask.description,
       completed: false, //hardcoded default status
-      worker_id: this.state.currentUser.id, //hardcoded default # "nice" - Tony
+      worker_id: this.state.currentUser._id || undefined,
     };
-    // sending the new task to the db
-    // expecting to receive nothing back?
     fetch('/api', {
       method: 'POST',
       headers: {
@@ -169,7 +178,6 @@ class App extends Component {
       body: JSON.stringify(newTask),
     })
       .then(() => {
-        // if you use a callback inside setState the parameter or whatever you name it will always be the previousState.
         this.setState((prevState) => {
           return {
             ...prevState,
@@ -182,7 +190,6 @@ class App extends Component {
       });
   }
   
-  //Delete task with the same ID as parameter
   deleteTask(id) {
     fetch('/api', {
       method: 'DELETE',
@@ -208,38 +215,37 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Fragment>
-          <MyNav />
-          <div className="container">
+          <MyNav/>
+          <div className="container mt-5">
             <Routes>
-           
+           {this.state.userReady && (
               <Route
                 path="/"
                 element={
-                  <MainContainer
+                  <MainContainer className='mt-5'
                     getAllInfo={this.getAllInfo}
-                    // editTask = {this.editTask}
-                    addTask={this.addTask}
                     handleSetTask={this.handleSetTask}
-                    deleteTask={this.deleteTask}
+                    handleSelectUser={this.handleSelectUser}
+                    handleSelectTask={this.handleSelectTask}
+                    handleAssignTask={this.handleAssignTask}
                     data={this.state}
                     users={this.getAllUsers}
                   />
                 }
               ></Route>
-
-              {this.state.tasks.length > 0 && this.state.users.length > 0  && (
+              )}
+              {this.state.userReady && (
                 <Route
                   path="/mytask"
                   element={
                     <TaskModifier
                       getAllInfo={this.getAllInfo}
-                      //  editTask = {this.editTask}
                       addTask={this.addTask}
                       handleSetTask={this.handleSetTask}
                       deleteTask={this.deleteTask}
                       data={this.state}
                       updateTask={this.updateTask}
-                      handleSelect={this.handleSelect}
+                      handleSelectUser={this.handleSelectUser}
 
                     />
                   }
