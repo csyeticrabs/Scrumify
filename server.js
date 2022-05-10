@@ -3,10 +3,11 @@ const path = require('path');
 const app = express();
 const PORT = 3000;
 const apiRouter = require('./server/routes/apiRouter');
-
+const userRouter = require('./server/routes/userRouter')
 app.use(express.json());
 
 app.use('/api', apiRouter);
+app.use('/users', userRouter);
 
 //Handling invalid URLs
 app.use((req, res, next) => {
