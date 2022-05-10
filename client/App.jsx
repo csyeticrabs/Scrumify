@@ -31,6 +31,7 @@ class App extends Component {
   componentDidMount() {
     this.getAllInfo();
     this.getAllUsers();
+    // this.getUserTasks();
   }
 
   getUserTasks() {
@@ -42,6 +43,7 @@ class App extends Component {
         copyOfUsers[i].totalTasks = userTasks;
         }
       }
+      console.log(copyOfUsers)
     this.setState(prevState => {
       return {
         ...prevState,
@@ -128,6 +130,7 @@ class App extends Component {
         }
       })      
     })
+    .then(() => this.forceUpdate)
     .catch((err) => {
       console.log('Failed to assign task to user')
     })
@@ -162,8 +165,8 @@ class App extends Component {
   }
 
   // Method to add a task to our board.
-  addTask(event) {
-    event.preventDefault();
+  addTask(e) {
+    // event.preventDefault();
 
     const newTask = {
       description: this.state.currentTask.description,
@@ -178,17 +181,38 @@ class App extends Component {
       body: JSON.stringify(newTask),
     })
       .then(() => {
+        this.getUserTasks();
         this.setState((prevState) => {
           return {
             ...prevState,
             tasks: [newTask, ...prevState.tasks],
+            
           };
         });
+      })
+      .then(()=> {
+        // this.state.currentUser.name = 'Select User';
+        e.target.reset();
+        // this.forceUpdate();
       })
       .catch((err) => {
         console.log(`Error adding a new task!: ${err}`);
       });
   }
+
+  // .then(() => {
+  //   const updatedUsers = this.state.users.map(user => {
+  //     return user._id === this.state.currentUser._id ? {...user, totalTasks: [...user.totalTasks, this.state.currentTask]} : {...user}
+  //   })
+  //   this.setState(prevState => {
+  //     return {
+  //     ...prevState,
+  //     users: updatedUsers,
+  //     currentTask: { id: undefined, description: 'Select Task' },
+  //     currentUser: {name: 'Select User', id: undefined},
+  //     }
+  //   })      
+  // })
   
   deleteTask(id) {
     fetch('/api', {
@@ -211,18 +235,24 @@ class App extends Component {
       });
   }
 
+  
+
   render() {
+
+    
     return (
+      
       <BrowserRouter>
         <Fragment>
           <MyNav/>
           <div className="container mt-5">
             <Routes>
-           {this.state.userReady && (
+           {this.state.userReady && (this.state.users.length > 1) && (this.state.tasks.length > 1) && (
               <Route
                 path="/"
                 element={
-                  <MainContainer className='mt-5'
+                  <MainContainer 
+                    className='mt-5'
                     getAllInfo={this.getAllInfo}
                     handleSetTask={this.handleSetTask}
                     handleSelectUser={this.handleSelectUser}
@@ -234,11 +264,11 @@ class App extends Component {
                 }
               ></Route>
               )}
-              {this.state.userReady && (
+              {this.state.userReady && (this.state.users.length > 1) && (this.state.tasks.length > 1) && (
                 <Route
                   path="/mytask"
                   element={
-                    <TaskModifier
+                    <TaskModifier 
                       getAllInfo={this.getAllInfo}
                       addTask={this.addTask}
                       handleSetTask={this.handleSetTask}

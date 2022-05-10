@@ -14,7 +14,7 @@ const MainContainer = props => {
   useEffect(() => {
     setProgress(percentage);
   })
-
+  // console.log(props)
     return (
       <Fragment>
           <div class="jumbotron">
@@ -54,6 +54,7 @@ const MainContainer = props => {
           
       </Fragment>
     );
+        // };
   };
 
 export default MainContainer;

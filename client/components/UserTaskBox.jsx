@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const UserTaskBox = (props) => {
-  
+  // console.log(props)
   const tasksArray = props.totalTasks.map(task => {return <li>{task.description}</li>})
   return (
     <div class="card mb-5" style={{"width": "18rem"}} >
