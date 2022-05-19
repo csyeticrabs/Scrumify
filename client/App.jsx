@@ -182,7 +182,7 @@ class App extends Component {
         this.setState((prevState) => {
           return {
             ...prevState,
-            tasks: [newTask, ...prevState.tasks],
+            tasks: [newTask, ...prevState.tasks], // Tasks is updated with the new task plus the previous tasks making a new tasks array. 
           };
         });
       })

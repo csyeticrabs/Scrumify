@@ -26,7 +26,6 @@ const MainContainer = props => {
             <p class="lead">
             <Link to="/mytask" className="btn btn-primary"> My Tasks </Link>
             </p>
-            
           </div>
 
           <ProgressBar animated now={progress} striped variant="success" label={`${progress}% Completed`} className='mb-5 mt-5'/>
