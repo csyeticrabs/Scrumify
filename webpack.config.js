@@ -12,7 +12,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /.js$/,
+        test: /.jsx|js$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
@@ -50,6 +50,10 @@ module.exports = {
         target: 'http://localhost:3000/',
         secure: false,
       },
+      '/users/**': {
+        target: 'http://localhost:3000',
+        secure: false,
+      }
     },
   },
 
